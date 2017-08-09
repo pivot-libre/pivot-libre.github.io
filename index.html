@@ -3,16 +3,695 @@ layout: default
 ---
 
 <div class="posts">
-  {% for post in site.posts %}
-    <article class="post">
+  <article class="post">
+    <h1>Brief</h1>
+    <div class="entry">
+      <p>Pivot is a web application currently under development that aims to provide legislators with the most fair and democratic way to vote on and prioritize budget items. Once completed, the first legislature to use Pivot will be the Common Council of Madison, Wisconsin.</p>
+    </div>
+  </article>
+  <article class="post">
+    <h1>Impetus</h1>
+    <div class="entry">
+      <p>At present, the Madison council debates and votes on budget items serially (in the order presented by the chair) until the budget is depleted - at which point any projects not yet voted on are precluded from the budget without a vote. Madison’s budgeting process is similar to that of many other governing bodies, and is problematic because the order in which items are voted on plays a significant role in the final budgets, potentially causing less popular projects presented earlier in the proceedings to be adopted over more popular ones listed nearer the end.</p>
+    </div>
+  </article>
 
-      <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h1>
-
-      <div class="entry">
-        {{ post.excerpt }}
-      </div>
-
-      <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">Read More</a>
-    </article>
-  {% endfor %}
+  <article class="post">
+    <h1>Solution</h1>
+    <div class="entry">
+      <p>Mathematicians and philosophers have found solutions for many of the problems posed by common voting systems. In particular, 18th century French Revolutionary philosopher the Marquis de Condorcet’s ranked pair voting system offers distinct advantages over standard voting practices on ballots where voters have multiple candidates to choose from, and where there may be more than one winner.</p>
+      <p>Pivot implements a version of the Condorcet voting method in order to determine an ideal sequence for which to vote on budget items, based on the popular priorities of voters. Members of a legislative body cast ballots - like that shown below - listing budget items in their preferred order of priority.</p>
+    </div>
+  </article>
 </div>
+
+<div class="ballotspace">
+<style scoped="true">
+.gu-mirror{position:fixed!important;margin:0!important;z-index:9999!important;opacity:.8;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";filter:alpha(opacity=80)}.gu-hide{display:none!important}.gu-unselectable{-webkit-user-select:none!important;-moz-user-select:none!important;-ms-user-select:none!important;user-select:none!important}.gu-transit{opacity:.2;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";filter:alpha(opacity=20)}
+div, ol, li, label, input {
+  position: relative;
+  /*display: inline-block;*/
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  background-position: center;
+  background-size: cover;
+  border: none;
+  list-style: none;
+}
+.ballotspace label:hover {
+  cursor: pointer;
+}
+
+/* basic layout */
+.ballotheader {
+  height: 90px;
+  width: 100%;
+  color: white;
+  font-size: 34px;
+  text-align: left;
+  line-height: 90px;
+  font-family: sans-serif;
+}
+
+/* step navigator */
+.stepNavigator {
+  width: 100%;
+  text-align: center;
+}
+.stepNavigator > a {
+  float: none;
+  padding: 10px 40px 0px 40px;
+  margin: 4px -2px 10px -2px;
+  font-size: 18px;
+  color: black;
+}
+.stepNavigator > a[href] {
+  color: white;
+}
+.stepNavigator > a::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  right:auto;
+  transform: translateX(-50%);
+  /*background-color: #009faf;*/
+  background-color: white;
+  width: 100%;
+  height: 5px;
+}
+.stepNavigator > a:nth-of-type(1)::before {
+  left: 50%;
+  transform: none;
+  width: 50%;
+}
+.stepNavigator > a:nth-last-of-type(1)::before {
+  left: 0%;
+  transform: none;
+  width: 50%;
+}
+.stepNavigator > a::after {
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  right:auto;
+  transform: translateX(-50%);
+  background-color: black;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+}
+.stepNavigator > a[href]::after {
+  background-color: white;
+}
+
+/* ballot layout and skin */
+.ballotspace {
+  box-sizing: border-box;
+  padding: 10px;
+  width: 100%;
+  background-color: #eeeeee;
+  text-align: center;
+  box-shadow: -3px 3px 4px lightgrey;
+  border-radius: 2px;
+}
+#ballotspaceheader {
+  width: 100%;
+  padding-top: 16px;
+  line-height: 30px;
+  font-size: 20px;
+  color: #3b3b3b;
+}
+#rankeditems,
+#unrankeditems {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 20px;
+  margin-top: 10px;
+  min-height: 50px;
+}
+#rankeditems::before,
+#unrankeditems::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px solid #aaaaaa;
+}
+#rankeditems::after,
+#unrankeditems::after {
+  content: "Unranked (tied for last)";
+  position: absolute;
+  font-size: 17px;
+  top: -7px;
+  left: 10px;
+  background-color: #eeeeee;
+  padding: 0 5px 0 5px;
+}
+#rankeditems::after {
+  content: "Ranked";
+}
+#unrankeditems .candidateDetails {
+  opacity: .7;
+}
+.candidate {
+  box-sizing: border-box;
+  width: 100%;
+  height: 48px;
+  /*min-height: 48px;*/
+  padding: 10px;
+}
+.candidateDetails {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 110px;
+  right: 0;
+  background-color: white;
+  box-shadow: 2px 2px 4px lightgrey;
+  border-radius: 2px;
+  font-family: arial;
+  line-height: 47px;
+  font-size: 15px;
+  font-weight: 400;
+  text-align: left;
+  overflow: hidden;
+}
+.candidateDescription {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 25px;
+  right: 100px;
+  color: #5d5d5d;
+}
+.candidateCost {
+  position: absolute;
+  box-sizing: border-box;
+  top: 0;
+  bottom: 0;
+  width: 100px;
+  right: 0;
+  padding: 0 5px 0 5px;
+  color: #d53e3e;
+}
+/*https://codepen.io/zachariab/pen/wkrbc*/
+.grippy {
+  position: absolute;
+  content: '....';
+  width: 10px;
+  height: 30px;
+  display: inline-block;
+  overflow: hidden;
+  line-height: 6px;
+  padding: 3px 4px;
+  cursor: move;
+  vertical-align: middle;
+  font-size: 19px;
+  font-family: sans-serif;
+  letter-spacing: 2px;
+  color: #cccccc;
+  top: 3px;
+  left: 2px;
+}
+.grippy::after {
+  content: '.. .. .. ..';
+}
+#unrankeditems > .candidate {
+  cursor: pointer;
+}
+#rankeditems > .candidate,
+.grippy,
+.grabby {
+  cursor: move;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+/* rank tie and banish display */
+#unrankeditems > .candidate > .rankingTools {
+  display: none;
+}
+.rankingTools {
+  position: absolute;
+  top: 0;
+  /*bottom: 0;*/
+  left: 0;
+  height: 100%;
+  width: 110px;
+  display: table;
+  text-align: left;
+}
+.rankdisplay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  /*left: 43px;*/
+  right: 2px;
+  /*height: 100%;*/
+  line-height: 47px;
+  width: 47px;
+  font-size: 18px;
+  background-color: #009faf;
+  color: #fff;
+  box-shadow: -2px 2px 4px lightgrey;
+  text-align: center;
+}
+.rankdisplay::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+/*.rankingTools:not(.ballotreview):hover .rankdisplay {*/
+.check:hover + .rankdisplay,
+.rankdisplay:hover {
+  display: none;
+}
+.rankingTools > input {
+  /*position: absolute;*/
+  height: 100%;
+  width: 45px;
+  /*transform: scale(1.5);*/
+  cursor: pointer;
+}
+.tie,
+.banish {
+  display: none;
+  height: 100%;
+  width: 33%;
+  text-align: center;
+  cursor: pointer;
+}
+label.check {
+  position: absolute;
+  box-sizing: border-box;
+  height: 100%;
+  width: 45px;
+  top: 0;
+  right: 0;
+}
+label.check::before,
+label.check::after {
+    content: "";
+    position: absolute;
+    top: 25%;
+    bottom: 25%;
+    left: 25%;
+    right: 25%;
+    /*border: 2px solid #009faf;*/
+    border: 2px solid #4dd0e1;
+    border-radius: 3px;
+}
+label.check::before {
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="50.04999923706055 37.630001068115234 99.89999389648438 81.08000183105469" width="99.89999389648438" height="81.08000183105469"><path d=" M 87.37 81.17 C 102.21 66.90 116.49 52.06 131.18 37.63 C 137.62 43.64 143.71 50.00 149.95 56.22 C 129.15 77.10 108.36 97.99 87.41 118.71 C 75.03 106.14 62.43 93.79 50.05 81.22 C 56.29 75.00 62.38 68.64 68.82 62.63 C 75.06 68.75 81.20 74.97 87.37 81.17 Z" transform="matrix(1, 0, 0, 1, -1.7763568394002505e-15, 0)" fill="#009faf"/></svg>');
+  /*background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='61' height='41' fill='@{bgColor}' stroke='none'><path d='M0,0 L30,40 L60,0 L0,0 Z'></path></svg>") no-repeat;*/
+  background-color: #fff;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  overflow: hidden;
+}
+label.check::after {
+  background-color: white;
+  opacity: 1;
+}
+label.check:hover::after {
+  opacity: .75;
+}
+.banish {
+  /*left: 20px;*/
+}
+.tie::before,
+.banish::before {
+  content: "";
+  /*position: absolute;*/
+  /*line-height: 48px;
+  font-size: 20px;
+  height: 100%;
+  width: 100%;*/
+
+  position: absolute;
+  top: 25%;
+  bottom: 25%;
+  left: 25%;
+  right: 25%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.banish::before {
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="74.98812866210938 49.971858978271484 66.72299194335938 66.70027160644531" width="66.72299194335938" height="66.70027160644531" xmlns="http://www.w3.org/2000/svg"><path fill="#000000" d=" M 76.14 54.07 C 78.58 49.65 85.19 48.57 88.82 52.16 C 95.47 58.26 101.45 65.08 108.12 71.17 C 115.55 65.34 121.35 57.68 128.55 51.58 C 133.25 47.72 141.11 51.28 141.60 57.26 C 142.37 61.74 138.58 64.93 135.75 67.75 C 130.58 72.92 125.29 77.96 120.26 83.27 C 125.42 88.93 131.04 94.14 136.43 99.57 C 139.20 102.22 142.48 105.53 141.55 109.75 C 140.77 115.73 132.74 118.95 128.21 114.80 C 121.28 108.59 115.19 101.49 108.27 95.26 C 101.74 101.40 95.70 108.04 89.18 114.20 C 86.49 116.97 81.92 117.51 78.73 115.29 C 74.90 112.89 73.71 107.13 76.58 103.55 C 82.69 96.36 90.32 90.55 96.17 83.13 C 90.22 76.64 83.66 70.75 77.61 64.36 C 74.88 61.75 74.10 57.33 76.14 54.07 Z" transform="matrix(1, 0, 0, 1, -1.7763568394002505e-15, 0)"/></svg>');
+}
+.tie::before {
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="50.00421142578125 62.44163513183594 100.000732421875 75.09085083007812" width="100.000732421875" height="75.09085083007812" xmlns="http://www.w3.org/2000/svg"><path fill="#000" d="M 71.4 50.52 C 76.77 48.82 83.02 51.31 85.78 56.2 C 87.56 59.13 87.52 62.68 87.55 66 C 87.43 89.68 87.57 113.36 87.48 137.03 C 87.61 141.81 84.99 146.58 80.62 148.66 C 75.42 151.41 68.48 149.74 65.02 145.01 C 62.76 142.2 62.44 138.47 62.46 135.01 C 62.56 111 62.44 86.98 62.51 62.97 C 62.27 57.41 66 51.99 71.4 50.52 Z M 121.4 50.52 C 126.76 48.82 133.01 51.31 135.78 56.2 C 137.56 59.13 137.52 62.69 137.55 66.01 C 137.43 89.68 137.57 113.36 137.48 137.04 C 137.61 141.82 134.98 146.58 130.62 148.66 C 125.42 151.41 118.48 149.74 115.02 145.01 C 112.76 142.2 112.44 138.47 112.46 135.01 C 112.56 110.99 112.44 86.98 112.51 62.97 C 112.27 57.41 116 51.99 121.4 50.52 Z" transform="matrix(0, 1, -1, 0, 199.99163818359375, -0.017517000436782837)"/></svg>');
+}
+.tie:hover::before {
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="50.00421142578125 62.44163513183594 100.000732421875 75.09085083007812" width="100.000732421875" height="75.09085083007812" xmlns="http://www.w3.org/2000/svg"><path fill="#aaa" d="M 71.4 50.52 C 76.77 48.82 83.02 51.31 85.78 56.2 C 87.56 59.13 87.52 62.68 87.55 66 C 87.43 89.68 87.57 113.36 87.48 137.03 C 87.61 141.81 84.99 146.58 80.62 148.66 C 75.42 151.41 68.48 149.74 65.02 145.01 C 62.76 142.2 62.44 138.47 62.46 135.01 C 62.56 111 62.44 86.98 62.51 62.97 C 62.27 57.41 66 51.99 71.4 50.52 Z M 121.4 50.52 C 126.76 48.82 133.01 51.31 135.78 56.2 C 137.56 59.13 137.52 62.69 137.55 66.01 C 137.43 89.68 137.57 113.36 137.48 137.04 C 137.61 141.82 134.98 146.58 130.62 148.66 C 125.42 151.41 118.48 149.74 115.02 145.01 C 112.76 142.2 112.44 138.47 112.46 135.01 C 112.56 110.99 112.44 86.98 112.51 62.97 C 112.27 57.41 116 51.99 121.4 50.52 Z" transform="matrix(0, 1, -1, 0, 199.99163818359375, -0.017517000436782837)"/></svg>');
+}
+.banish:hover::before {
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="74.98812866210938 49.971858978271484 66.72299194335938 66.70027160644531" width="66.72299194335938" height="66.70027160644531" xmlns="http://www.w3.org/2000/svg"><path fill="red" d=" M 76.14 54.07 C 78.58 49.65 85.19 48.57 88.82 52.16 C 95.47 58.26 101.45 65.08 108.12 71.17 C 115.55 65.34 121.35 57.68 128.55 51.58 C 133.25 47.72 141.11 51.28 141.60 57.26 C 142.37 61.74 138.58 64.93 135.75 67.75 C 130.58 72.92 125.29 77.96 120.26 83.27 C 125.42 88.93 131.04 94.14 136.43 99.57 C 139.20 102.22 142.48 105.53 141.55 109.75 C 140.77 115.73 132.74 118.95 128.21 114.80 C 121.28 108.59 115.19 101.49 108.27 95.26 C 101.74 101.40 95.70 108.04 89.18 114.20 C 86.49 116.97 81.92 117.51 78.73 115.29 C 74.90 112.89 73.71 107.13 76.58 103.55 C 82.69 96.36 90.32 90.55 96.17 83.13 C 90.22 76.64 83.66 70.75 77.61 64.36 C 74.88 61.75 74.10 57.33 76.14 54.07 Z" transform="matrix(1, 0, 0, 1, -1.7763568394002505e-15, 0)"/></svg>');
+  color: red;
+}
+input[type=checkbox] {
+  display: none;
+}
+.rankingTools > input:checked ~ .tie,
+.rankingTools > input:checked ~ .banish {
+  display: inline-block;
+}
+.rankingTools > input:checked ~ .rankdisplay {
+  display: none;
+}
+.rankingTools > input:checked ~ label.check::after {
+  opacity: 0;
+}
+/*hide rankingTools box when dragging*/
+.candidate.gu-mirror > .rankingTools {
+  display: none;
+}
+
+/* rank counting (FUNCTIONAL) */
+/* increment the rank with each candidate by default */
+#rankeditems > .candidate {
+  counter-increment: rank;
+}
+/* do not increment the rank for gu-transit items that fall after a tied item, nor the ranks for items within a tie that fall after a gu-transit item, since they might not be coming from a tie */
+#rankeditems > .candidate[data-tie] + .gu-transit,
+#rankeditems > .candidate.gu-transit + [data-tie="middle"],
+#rankeditems > .candidate.gu-transit + [data-tie="end"],
+#rankeditems > .candidate[data-tie] + [data-tie] {
+  counter-increment: none;
+}
+#rankeditems > .candidate[data-tie] + [data-tie="start"]:not(.gu-transit),
+/* increment the rank for gu-transit items that fall right after the end of a tie */
+#rankeditems > .candidate[data-tie="end"] + .gu-transit {
+  counter-increment: rank;
+}
+/* actually show the count */
+#rankeditems > .candidate > .rankingTools > .rankdisplay::before {
+  content: counter(rank);
+}
+</style>
+  <div id="ballotspaceheader">Select your 1st choice</div>
+  <ol id="rankeditems">
+  </ol>
+  <ol id="unrankeditems">
+    <li class="candidate" onclick="candidateClick(this)">
+      <div class="rankingTools">
+        <input type="checkbox" name="ballotcheck" id="ballotcheck-8">
+        <div class="banish" onclick="processSelected(event,banish)"></div>
+        <div class="tie" onclick="processSelected(event,tieSelected)"></div>
+        <label class="check" for="ballotcheck-8"></label>
+        <div class="rankdisplay"></div>
+      </div>
+      <div class="candidateDetails">
+        <div class="grippy"></div>
+        <div class="candidateDescription">Paterson Street Operations Center Remodel project</div>
+        <div class="candidateCost">(-$350,000)</div>
+      </div>
+    </li>
+    <li class="candidate" onclick="candidateClick(this)">
+      <div class="rankingTools">
+        <input type="checkbox" name="ballotcheck" id="ballotcheck-9">
+        <div class="banish" onclick="processSelected(event,banish)"></div>
+        <div class="tie" onclick="processSelected(event,tieSelected)"></div>
+        <label class="check" for="ballotcheck-9"></label>
+        <div class="rankdisplay"></div>
+      </div>
+      <div class="candidateDetails">
+        <div class="grippy"></div>
+        <div class="candidateDescription">Amendment for repairs at the Village on Park</div>
+        <div class="candidateCost">(-$72,928)</div>
+      </div>
+    </li>
+  <li class="candidate" onclick="candidateClick(this)">
+      <div class="rankingTools">
+        <input type="checkbox" name="ballotcheck" id="ballotcheck-1">
+        <div class="banish" onclick="processSelected(event,banish)"></div>
+        <div class="tie" onclick="processSelected(event,tieSelected)"></div>
+        <label class="check" for="ballotcheck-1"></label>
+        <div class="rankdisplay"></div>
+      </div>
+      <div class="candidateDetails">
+        <div class="grippy"></div>
+        <div class="candidateDescription">Pump Station Improvement</div>
+        <div class="candidateCost">(-$150,000)</div>
+      </div>
+    </li><li class="candidate" onclick="candidateClick(this)">
+      <div class="rankingTools">
+        <input type="checkbox" name="ballotcheck" id="ballotcheck-3">
+        <div class="banish" onclick="processSelected(event,banish)"></div>
+        <div class="tie" onclick="processSelected(event,tieSelected)"></div>
+        <label class="check" for="ballotcheck-3"></label>
+        <div class="rankdisplay"></div>
+      </div>
+      <div class="candidateDetails">
+        <div class="grippy"></div>
+        <div class="candidateDescription">Approve RFP and 1-year seed-funding for Participatory Budgeting experiment</div>
+        <div class="candidateCost">(-$267,000)</div>
+      </div>
+    </li><li class="candidate" onclick="candidateClick(this)">
+      <div class="rankingTools">
+        <input type="checkbox" name="ballotcheck" id="ballotcheck-5">
+        <div class="banish" onclick="processSelected(event,banish)"></div>
+        <div class="tie" onclick="processSelected(event,tieSelected)"></div>
+        <label class="check" for="ballotcheck-5"></label>
+        <div class="rankdisplay"></div>
+      </div>
+      <div class="candidateDetails">
+        <div class="grippy"></div>
+        <div class="candidateDescription">Amendment to Buckeye Road project.</div>
+        <div class="candidateCost">(-$65,000)</div>
+      </div>
+    </li><li class="candidate" onclick="candidateClick(this)">
+      <div class="rankingTools">
+        <input type="checkbox" name="ballotcheck" id="ballotcheck-2">
+        <div class="banish" onclick="processSelected(event,banish)"></div>
+        <div class="tie" onclick="processSelected(event,tieSelected)"></div>
+        <label class="check" for="ballotcheck-2"></label>
+        <div class="rankdisplay"></div>
+      </div>
+      <div class="candidateDetails">
+        <div class="grippy"></div>
+        <div class="candidateDescription">Water Utility’s Facility Improvements capital program</div>
+        <div class="candidateCost">(-$83,000)</div>
+      </div>
+    </li><li class="candidate" onclick="candidateClick(this)">
+      <div class="rankingTools">
+        <input type="checkbox" name="ballotcheck" id="ballotcheck-4">
+        <div class="banish" onclick="processSelected(event,banish)"></div>
+        <div class="tie" onclick="processSelected(event,tieSelected)"></div>
+        <label class="check" for="ballotcheck-4"></label>
+        <div class="rankdisplay"></div>
+      </div>
+      <div class="candidateDetails">
+        <div class="grippy"></div>
+        <div class="candidateDescription">East Johnson Street: Baldwin to 1st Street project</div>
+        <div class="candidateCost">(-$140,000)</div>
+      </div>
+    </li><li class="candidate" onclick="candidateClick(this)">
+      <div class="rankingTools">
+        <input type="checkbox" name="ballotcheck" id="ballotcheck-6">
+        <div class="banish" onclick="processSelected(event,banish)"></div>
+        <div class="tie" onclick="processSelected(event,tieSelected)"></div>
+        <label class="check" for="ballotcheck-6"></label>
+        <div class="rankdisplay"></div>
+      </div>
+      <div class="candidateDetails">
+        <div class="grippy"></div>
+        <div class="candidateDescription">Amending for the renovation of the Park Edge Park Ridge Neighborhood Center.</div>
+        <div class="candidateCost">(-$200,000)</div>
+      </div>
+    </li><li class="candidate" onclick="candidateClick(this)">
+      <div class="rankingTools">
+        <input type="checkbox" name="ballotcheck" id="ballotcheck-7">
+        <div class="banish" onclick="processSelected(event,banish)"></div>
+        <div class="tie" onclick="processSelected(event,tieSelected)"></div>
+        <label class="check" for="ballotcheck-7"></label>
+        <div class="rankdisplay"></div>
+      </div>
+      <div class="candidateDetails">
+        <div class="grippy"></div>
+        <div class="candidateDescription">Housing Cost Reduction Initiative (HCRI)</div>
+        <div class="candidateCost">(-$550,000)</div>
+      </div>
+    </li>
+  </ol>
+</div>
+<div class="posts">
+  <article class="post">
+    <div class="entry">
+      <p>Pivot then tallies all submitted ballots in order to produce a democratically selected list of items ordered by the popular priorities of the voters. Budget items can subsequently be voted on in the order presented by this list, which ensures that items are voted on in order of popular priority, rather than by the agenda established by the chair or other procedural entity.</p>
+      <p>By allowing legislatures to set their budget agendas by ranking budget items, they can collectively create budgets that fully exemplify their values.</p>
+    </div>
+  </article>
+  <!-- {% for post in site.posts %} -->
+    <!-- <article class="post"> -->
+
+      <!-- <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h1> -->
+
+      <!-- <div class="entry"> -->
+        <!-- {{ post.excerpt }} -->
+      <!-- </div> -->
+
+      <!-- <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">Read More</a> -->
+    <!-- </article> -->
+  <!-- {% endfor %} -->
+</div>
+<script>
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var n;n="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this,n.dragula=e()}}(function(){return function e(n,t,r){function o(u,c){if(!t[u]){if(!n[u]){var a="function"==typeof require&&require;if(!c&&a)return a(u,!0);if(i)return i(u,!0);var f=new Error("Cannot find module '"+u+"'");throw f.code="MODULE_NOT_FOUND",f}var l=t[u]={exports:{}};n[u][0].call(l.exports,function(e){var t=n[u][1][e];return o(t?t:e)},l,l.exports,e,n,t,r)}return t[u].exports}for(var i="function"==typeof require&&require,u=0;u<r.length;u++)o(r[u]);return o}({1:[function(e,n,t){"use strict";function r(e){var n=u[e];return n?n.lastIndex=0:u[e]=n=new RegExp(c+e+a,"g"),n}function o(e,n){var t=e.className;t.length?r(n).test(t)||(e.className+=" "+n):e.className=n}function i(e,n){e.className=e.className.replace(r(n)," ").trim()}var u={},c="(?:^|\\s)",a="(?:\\s|$)";n.exports={add:o,rm:i}},{}],2:[function(e,n,t){(function(t){"use strict";function r(e,n){function t(e){return-1!==le.containers.indexOf(e)||fe.isContainer(e)}function r(e){var n=e?"remove":"add";o(S,n,"mousedown",O),o(S,n,"mouseup",L)}function c(e){var n=e?"remove":"add";o(S,n,"mousemove",N)}function m(e){var n=e?"remove":"add";w[n](S,"selectstart",C),w[n](S,"click",C)}function h(){r(!0),L({})}function C(e){ce&&e.preventDefault()}function O(e){ne=e.clientX,te=e.clientY;var n=1!==i(e)||e.metaKey||e.ctrlKey;if(!n){var t=e.target,r=T(t);r&&(ce=r,c(),"mousedown"===e.type&&(p(t)?t.focus():e.preventDefault()))}}function N(e){if(ce){if(0===i(e))return void L({});if(void 0===e.clientX||e.clientX!==ne||void 0===e.clientY||e.clientY!==te){if(fe.ignoreInputTextSelection){var n=y("clientX",e),t=y("clientY",e),r=x.elementFromPoint(n,t);if(p(r))return}var o=ce;c(!0),m(),D(),B(o);var a=u(W);Z=y("pageX",e)-a.left,ee=y("pageY",e)-a.top,E.add(ie||W,"gu-transit"),K(),U(e)}}}function T(e){if(!(le.dragging&&J||t(e))){for(var n=e;v(e)&&t(v(e))===!1;){if(fe.invalid(e,n))return;if(e=v(e),!e)return}var r=v(e);if(r&&!fe.invalid(e,n)){var o=fe.moves(e,r,n,g(e));if(o)return{item:e,source:r}}}}function X(e){return!!T(e)}function Y(e){var n=T(e);n&&B(n)}function B(e){$(e.item,e.source)&&(ie=e.item.cloneNode(!0),le.emit("cloned",ie,e.item,"copy")),Q=e.source,W=e.item,re=oe=g(e.item),le.dragging=!0,le.emit("drag",W,Q)}function P(){return!1}function D(){if(le.dragging){var e=ie||W;M(e,v(e))}}function I(){ce=!1,c(!0),m(!0)}function L(e){if(I(),le.dragging){var n=ie||W,t=y("clientX",e),r=y("clientY",e),o=a(J,t,r),i=q(o,t,r);i&&(ie&&fe.copySortSource||!ie||i!==Q)?M(n,i):fe.removeOnSpill?R():A()}}function M(e,n){var t=v(e);ie&&fe.copySortSource&&n===Q&&t.removeChild(W),k(n)?le.emit("cancel",e,Q,Q):le.emit("drop",e,n,Q,oe),j()}function R(){if(le.dragging){var e=ie||W,n=v(e);n&&n.removeChild(e),le.emit(ie?"cancel":"remove",e,n,Q),j()}}function A(e){if(le.dragging){var n=arguments.length>0?e:fe.revertOnSpill,t=ie||W,r=v(t),o=k(r);o===!1&&n&&(ie?r&&r.removeChild(ie):Q.insertBefore(t,re)),o||n?le.emit("cancel",t,Q,Q):le.emit("drop",t,r,Q,oe),j()}}function j(){var e=ie||W;I(),z(),e&&E.rm(e,"gu-transit"),ue&&clearTimeout(ue),le.dragging=!1,ae&&le.emit("out",e,ae,Q),le.emit("dragend",e),Q=W=ie=re=oe=ue=ae=null}function k(e,n){var t;return t=void 0!==n?n:J?oe:g(ie||W),e===Q&&t===re}function q(e,n,r){function o(){var o=t(i);if(o===!1)return!1;var u=H(i,e),c=V(i,u,n,r),a=k(i,c);return a?!0:fe.accepts(W,i,Q,c)}for(var i=e;i&&!o();)i=v(i);return i}function U(e){function n(e){le.emit(e,f,ae,Q)}function t(){s&&n("over")}function r(){ae&&n("out")}if(J){e.preventDefault();var o=y("clientX",e),i=y("clientY",e),u=o-Z,c=i-ee;J.style.left=u+"px",J.style.top=c+"px";var f=ie||W,l=a(J,o,i),d=q(l,o,i),s=null!==d&&d!==ae;(s||null===d)&&(r(),ae=d,t());var p=v(f);if(d===Q&&ie&&!fe.copySortSource)return void(p&&p.removeChild(f));var m,h=H(d,l);if(null!==h)m=V(d,h,o,i);else{if(fe.revertOnSpill!==!0||ie)return void(ie&&p&&p.removeChild(f));m=re,d=Q}(null===m&&s||m!==f&&m!==g(f))&&(oe=m,d.insertBefore(f,m),le.emit("shadow",f,d,Q))}}function _(e){E.rm(e,"gu-hide")}function F(e){le.dragging&&E.add(e,"gu-hide")}function K(){if(!J){var e=W.getBoundingClientRect();J=W.cloneNode(!0),J.style.width=d(e)+"px",J.style.height=s(e)+"px",E.rm(J,"gu-transit"),E.add(J,"gu-mirror"),fe.mirrorContainer.appendChild(J),o(S,"add","mousemove",U),E.add(fe.mirrorContainer,"gu-unselectable"),le.emit("cloned",J,W,"mirror")}}function z(){J&&(E.rm(fe.mirrorContainer,"gu-unselectable"),o(S,"remove","mousemove",U),v(J).removeChild(J),J=null)}function H(e,n){for(var t=n;t!==e&&v(t)!==e;)t=v(t);return t===S?null:t}function V(e,n,t,r){function o(){var n,o,i,u=e.children.length;for(n=0;u>n;n++){if(o=e.children[n],i=o.getBoundingClientRect(),c&&i.left+i.width/2>t)return o;if(!c&&i.top+i.height/2>r)return o}return null}function i(){var e=n.getBoundingClientRect();return u(c?t>e.left+d(e)/2:r>e.top+s(e)/2)}function u(e){return e?g(n):n}var c="horizontal"===fe.direction,a=n!==e?i():o();return a}function $(e,n){return"boolean"==typeof fe.copy?fe.copy:fe.copy(e,n)}var G=arguments.length;1===G&&Array.isArray(e)===!1&&(n=e,e=[]);var J,Q,W,Z,ee,ne,te,re,oe,ie,ue,ce,ae=null,fe=n||{};void 0===fe.moves&&(fe.moves=l),void 0===fe.accepts&&(fe.accepts=l),void 0===fe.invalid&&(fe.invalid=P),void 0===fe.containers&&(fe.containers=e||[]),void 0===fe.isContainer&&(fe.isContainer=f),void 0===fe.copy&&(fe.copy=!1),void 0===fe.copySortSource&&(fe.copySortSource=!1),void 0===fe.revertOnSpill&&(fe.revertOnSpill=!1),void 0===fe.removeOnSpill&&(fe.removeOnSpill=!1),void 0===fe.direction&&(fe.direction="vertical"),void 0===fe.ignoreInputTextSelection&&(fe.ignoreInputTextSelection=!0),void 0===fe.mirrorContainer&&(fe.mirrorContainer=x.body);var le=b({containers:fe.containers,start:Y,end:D,cancel:A,remove:R,destroy:h,canMove:X,dragging:!1});return fe.removeOnSpill===!0&&le.on("over",_).on("out",F),r(),le}function o(e,n,r,o){var i={mouseup:"touchend",mousedown:"touchstart",mousemove:"touchmove"},u={mouseup:"pointerup",mousedown:"pointerdown",mousemove:"pointermove"},c={mouseup:"MSPointerUp",mousedown:"MSPointerDown",mousemove:"MSPointerMove"};t.navigator.pointerEnabled?w[n](e,u[r],o):t.navigator.msPointerEnabled?w[n](e,c[r],o):(w[n](e,i[r],o),w[n](e,r,o))}function i(e){if(void 0!==e.touches)return e.touches.length;if(void 0!==e.which&&0!==e.which)return e.which;if(void 0!==e.buttons)return e.buttons;var n=e.button;return void 0!==n?1&n?1:2&n?3:4&n?2:0:void 0}function u(e){var n=e.getBoundingClientRect();return{left:n.left+c("scrollLeft","pageXOffset"),top:n.top+c("scrollTop","pageYOffset")}}function c(e,n){return"undefined"!=typeof t[n]?t[n]:S.clientHeight?S[e]:x.body[e]}function a(e,n,t){var r,o=e||{},i=o.className;return o.className+=" gu-hide",r=x.elementFromPoint(n,t),o.className=i,r}function f(){return!1}function l(){return!0}function d(e){return e.width||e.right-e.left}function s(e){return e.height||e.bottom-e.top}function v(e){return e.parentNode===x?null:e.parentNode}function p(e){return"INPUT"===e.tagName||"TEXTAREA"===e.tagName||"SELECT"===e.tagName||m(e)}function m(e){return e?"false"===e.contentEditable?!1:"true"===e.contentEditable?!0:m(v(e)):!1}function g(e){function n(){var n=e;do n=n.nextSibling;while(n&&1!==n.nodeType);return n}return e.nextElementSibling||n()}function h(e){return e.targetTouches&&e.targetTouches.length?e.targetTouches[0]:e.changedTouches&&e.changedTouches.length?e.changedTouches[0]:e}function y(e,n){var t=h(n),r={pageX:"clientX",pageY:"clientY"};return e in r&&!(e in t)&&r[e]in t&&(e=r[e]),t[e]}var b=e("contra/emitter"),w=e("crossvent"),E=e("./classes"),x=document,S=x.documentElement;n.exports=r}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./classes":1,"contra/emitter":5,crossvent:6}],3:[function(e,n,t){n.exports=function(e,n){return Array.prototype.slice.call(e,n)}},{}],4:[function(e,n,t){"use strict";var r=e("ticky");n.exports=function(e,n,t){e&&r(function(){e.apply(t||null,n||[])})}},{ticky:9}],5:[function(e,n,t){"use strict";var r=e("atoa"),o=e("./debounce");n.exports=function(e,n){var t=n||{},i={};return void 0===e&&(e={}),e.on=function(n,t){return i[n]?i[n].push(t):i[n]=[t],e},e.once=function(n,t){return t._once=!0,e.on(n,t),e},e.off=function(n,t){var r=arguments.length;if(1===r)delete i[n];else if(0===r)i={};else{var o=i[n];if(!o)return e;o.splice(o.indexOf(t),1)}return e},e.emit=function(){var n=r(arguments);return e.emitterSnapshot(n.shift()).apply(this,n)},e.emitterSnapshot=function(n){var u=(i[n]||[]).slice(0);return function(){var i=r(arguments),c=this||e;if("error"===n&&t["throws"]!==!1&&!u.length)throw 1===i.length?i[0]:i;return u.forEach(function(r){t.async?o(r,i,c):r.apply(c,i),r._once&&e.off(n,r)}),e}},e}},{"./debounce":4,atoa:3}],6:[function(e,n,t){(function(t){"use strict";function r(e,n,t,r){return e.addEventListener(n,t,r)}function o(e,n,t){return e.attachEvent("on"+n,f(e,n,t))}function i(e,n,t,r){return e.removeEventListener(n,t,r)}function u(e,n,t){var r=l(e,n,t);return r?e.detachEvent("on"+n,r):void 0}function c(e,n,t){function r(){var e;return p.createEvent?(e=p.createEvent("Event"),e.initEvent(n,!0,!0)):p.createEventObject&&(e=p.createEventObject()),e}function o(){return new s(n,{detail:t})}var i=-1===v.indexOf(n)?o():r();e.dispatchEvent?e.dispatchEvent(i):e.fireEvent("on"+n,i)}function a(e,n,r){return function(n){var o=n||t.event;o.target=o.target||o.srcElement,o.preventDefault=o.preventDefault||function(){o.returnValue=!1},o.stopPropagation=o.stopPropagation||function(){o.cancelBubble=!0},o.which=o.which||o.keyCode,r.call(e,o)}}function f(e,n,t){var r=l(e,n,t)||a(e,n,t);return h.push({wrapper:r,element:e,type:n,fn:t}),r}function l(e,n,t){var r=d(e,n,t);if(r){var o=h[r].wrapper;return h.splice(r,1),o}}function d(e,n,t){var r,o;for(r=0;r<h.length;r++)if(o=h[r],o.element===e&&o.type===n&&o.fn===t)return r}var s=e("custom-event"),v=e("./eventmap"),p=t.document,m=r,g=i,h=[];t.addEventListener||(m=o,g=u),n.exports={add:m,remove:g,fabricate:c}}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./eventmap":7,"custom-event":8}],7:[function(e,n,t){(function(e){"use strict";var t=[],r="",o=/^on/;for(r in e)o.test(r)&&t.push(r.slice(2));n.exports=t}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],8:[function(e,n,t){(function(e){function t(){try{var e=new r("cat",{detail:{foo:"bar"}});return"cat"===e.type&&"bar"===e.detail.foo}catch(n){}return!1}var r=e.CustomEvent;n.exports=t()?r:"function"==typeof document.createEvent?function(e,n){var t=document.createEvent("CustomEvent");return n?t.initCustomEvent(e,n.bubbles,n.cancelable,n.detail):t.initCustomEvent(e,!1,!1,void 0),t}:function(e,n){var t=document.createEventObject();return t.type=e,n?(t.bubbles=Boolean(n.bubbles),t.cancelable=Boolean(n.cancelable),t.detail=n.detail):(t.bubbles=!1,t.cancelable=!1,t.detail=void 0),t}}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],9:[function(e,n,t){var r,o="function"==typeof setImmediate;r=o?function(e){setImmediate(e)}:function(e){setTimeout(e,0)},n.exports=r},{}]},{},[2])(2)});
+</script>
+<script>
+'use strict';
+
+//save rankings right at the beginning, so that we update the header and record that the user has seen the ballot
+// onCandidateMove();
+
+//set up drag/drop rules
+var drake = dragula([document.getElementById("rankeditems"), document.getElementById("unrankeditems")]);
+drake.on('drop', function (el) { onCandidateDrop(el); })
+
+
+//functions
+function processSelected(event, processFunction) {
+  event.preventDefault();
+  event.stopPropagation();
+  var functionVars = {}, el, els = document.querySelectorAll(".rankingTools > input:checked");
+  for (var i = 0; i < els.length; i++) {
+    processFunction(els[i], functionVars);
+  }
+  onCandidateMove();
+}
+function tieSelected(el, vars) {
+  var item = el.parentElement.parentElement, tieAtt = item.getAttribute("data-tie");
+  if (!vars.rankeditems) {
+    vars.rankeditems = document.getElementById("rankeditems");
+    if (!tieAtt) { markTieAtt(item, "start"); }
+    else if (tieAtt == "end") { markTieAtt(item, "middle"); }
+  }
+  else {
+    insertAfter(item, vars.afterEl);
+    markTieAtt(item, "middle");
+  }
+  vars.afterEl = item;  //save off the item, so we can append after it on the next iteration
+  el.checked = false;
+}
+
+function banish(el, vars) {
+  var item = el.parentElement.parentElement
+  if (!vars.unrankeditems) { vars.unrankeditems = document.getElementById("unrankeditems"); }
+  //unckeck, remove tie attributes, and send to the end of the unranked list
+  el.checked = false;
+  markTieAtt(item, "none");
+  vars.unrankeditems.appendChild(item);
+}
+function candidateClick(el) {
+  var rankeditems = document.getElementById("rankeditems");
+  if (el.parentElement == rankeditems) { return; }  //no action when clicking a ranked item
+
+  rankeditems.appendChild(el);
+  onCandidateMove(rankeditems);
+}
+
+function markTieEnds() {
+  //noe - this doesn't account for cases where the last item is part of a tie. The behavior isn't too bad, though (it allows you to drag items onto the end of the tie), so I'm leaving it for now
+  var selector = "#rankeditems > .candidate[data-tie='middle'] + .candidate:not([data-tie='middle']):not([data-tie='end'])";
+  var itemsAfterTies = document.querySelectorAll(selector);
+  for (var i = 0; i < itemsAfterTies.length; i++) {
+    markTieAtt(itemsAfterTies[i].previousElementSibling, "end");
+  }
+}
+function markTieStarts() {
+  var selector = "#rankeditems > .candidate:not([data-tie='start']):not([data-tie='middle']) + [data-tie='middle']";
+  var itemsStartingTies = document.querySelectorAll(selector);
+  for (var i = 0; i < itemsStartingTies.length; i++) {
+    markTieAtt(itemsStartingTies[i], "start");
+  }
+  selector = "#rankeditems > [data-tie='middle']:first-child";
+  itemsStartingTies = document.querySelectorAll(selector);
+  for (var i = 0; i < itemsStartingTies.length; i++) {
+    markTieAtt(itemsStartingTies[i], "start");
+  }
+}
+function removeLoneTieItems() {
+  var nextSibling;
+  var selector = "#rankeditems > .candidate:not([data-tie]) + .candidate[data-tie]";
+  var itemsAlone = document.querySelectorAll(selector);
+  for (var i = 0; i < itemsAlone.length; i++) {
+    nextSibling = itemsAlone[i].nextElementSibling;
+    if (!nextSibling || !nextSibling.getAttribute("data-tie")) { markTieAtt(itemsAlone[i], "none"); }
+  }
+  selector = "#rankeditems > [data-tie]:first-child";
+  itemsAlone = document.querySelectorAll(selector);
+  for (var i = 0; i < itemsAlone.length; i++) {
+    nextSibling = itemsAlone[i].nextElementSibling;
+    if (!nextSibling || !nextSibling.getAttribute("data-tie")) { markTieAtt(itemsAlone[i], "none"); }
+  }
+}
+function markTieAtt(item, position) {
+  if (position == "none") {
+    item.removeAttribute("data-tie");
+    // item.style["background-color"] = "";
+  }
+  else {
+    item.setAttribute("data-tie", position);
+    // item.style["background-color"] = "yellow";
+  }
+}
+function onCandidateDrop(item) {
+  var previousItem, previousItemTieAtt;
+  previousItem = item.previousElementSibling;
+  if (previousItem) { previousItemTieAtt = previousItem.getAttribute("data-tie"); }
+  if (previousItemTieAtt == "start" || previousItemTieAtt == "middle") {
+    markTieAtt(item, "middle");
+  }
+  else { markTieAtt(item, "none"); }
+  onCandidateMove();
+}
+function cleanUpTies() {
+  // mergeIntoTies();
+  markTieStarts();
+  markTieEnds();
+  removeLoneTieItems();
+}
+function onCandidateMove(rankeditems) {
+  cleanUpTies();
+  rankeditems = rankeditems || document.getElementById("rankeditems");
+  updateHeader(rankeditems.childElementCount);
+}
+function updateHeader(rankeditemsCount) {
+  var header = document.getElementById("ballotspaceheader");
+  if (document.getElementById("unrankeditems").childElementCount == 0) {
+    header.innerHTML = "You may continue sorting items. When satisfied, you can move on to the Review step.";
+    return;
+  }
+  header.innerHTML = "Select your " + ordinalSuffix(rankeditems.childElementCount + 1) + " choice";
+}
+
+
+//helpers
+function ordinalSuffix(i) {
+  //(got this here: https://stackoverflow.com/questions/13627308/add-st-nd-rd-and-th-ordinal-suffix-to-a-number)
+  var j = i % 10, k = i % 100;
+  if (j == 1 && k != 11) { return i + "st"; }
+  if (j == 2 && k != 12) { return i + "nd"; }
+  if (j == 3 && k != 13) { return i + "rd"; }
+  return i + "th";
+}
+function insertAfter(el, afterEl) {
+  if (afterEl.nextElementSibling) { afterEl.parentNode.insertBefore(el, afterEl.nextElementSibling); }
+  else {afterEl.parentNode.appendChild}
+}
+</script>
