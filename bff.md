@@ -26,6 +26,8 @@ A >> B
 A == B
 ```
 
+The character `*` is forbidden, except in specific situations detailed in [Multipliers](#multipliers).
+
 ## Whitespace
 If there is horizontal whitespace (spaces, tabs) between a comparison and an option, it is ignored. All of the following are valid and equivalent.
 ```
