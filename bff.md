@@ -4,9 +4,12 @@ title: Ballot File Format (BFF)
 permalink: /bff/
 ---
 
-The Ballot File Format concisely represents ranked ballots and ranked election results.
+The Ballot File Format aims to concisely represent ranked ballots and ranked election results.
 
-## Examples
+## Contributing
+The format is a working draft. You can suggest improvements and hold discussions [here](https://github.com/pivot-libre/pivot-libre.github.io/issues). If you are comfortable with GitHub, you are welcome to submit pull requests to [the source file for this web page](https://github.com/pivot-libre/pivot-libre.github.io/blob/master/bff.md).
+
+## BFF Examples
 ```
 A > B > C
 A > B = C
